@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "320e6d41_636d29ec",
+        "filename": "ci/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2019-08-15T12:56:30Z",
+      "side": 1,
+      "message": "ok thanks for explaining. You might add a comment here to explain that the image built here is never pushed, it\u0027s only used for verification.",
+      "parentUuid": "77122935_7d7c5f9c",
+      "range": {
+        "startLine": 19,
+        "startChar": 13,
+        "endLine": 19,
+        "endChar": 34
+      },
+      "revId": "5dd25e9f6ee16e9f5a9aba4b5cffd7a0aba32955",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2cbede42_4290bac2",
         "filename": "ci/ci_build.sh",
         "patchSetId": 1
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "True, since Go has its own packet handling there is nothing to build or install in this library case. \n\nBut do you want me to change the name? Like ci_test.sh?",
       "parentUuid": "2cbede42_4290bac2",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 3
+      },
+      "revId": "5dd25e9f6ee16e9f5a9aba4b5cffd7a0aba32955",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cfcfa272_7d00467f",
+        "filename": "ci/ci_build.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000014
+      },
+      "writtenOn": "2019-08-15T12:56:30Z",
+      "side": 1,
+      "message": "Yes that seems appropriate, makes it clear that this job is for verification only.",
+      "parentUuid": "319494e2_ea4eeb7d",
       "range": {
         "startLine": 22,
         "startChar": 0,
