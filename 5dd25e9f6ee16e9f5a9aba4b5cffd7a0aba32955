@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "77122935_7d7c5f9c",
+        "filename": "ci/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2019-08-15T10:06:54Z",
+      "side": 1,
+      "message": "I\u0027m not an expert either. Seems that test works also if I copy the stuff to /tmp.\nBut Go instructions says that you should put your code under $GOPATH and develop the stuff there.\n\nI\u0027m not sure if that matters in this case. This container is just for testing.",
+      "parentUuid": "165aabab_210b2223",
+      "range": {
+        "startLine": 19,
+        "startChar": 13,
+        "endLine": 19,
+        "endChar": 34
+      },
+      "revId": "5dd25e9f6ee16e9f5a9aba4b5cffd7a0aba32955",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2cbede42_4290bac2",
         "filename": "ci/ci_build.sh",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2019-08-15T09:49:47Z",
       "side": 1,
       "message": "So this is only a test, not a build/install script?",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 3
+      },
+      "revId": "5dd25e9f6ee16e9f5a9aba4b5cffd7a0aba32955",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "319494e2_ea4eeb7d",
+        "filename": "ci/ci_build.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2019-08-15T10:06:54Z",
+      "side": 1,
+      "message": "True, since Go has its own packet handling there is nothing to build or install in this library case. \n\nBut do you want me to change the name? Like ci_test.sh?",
+      "parentUuid": "2cbede42_4290bac2",
       "range": {
         "startLine": 22,
         "startChar": 0,
