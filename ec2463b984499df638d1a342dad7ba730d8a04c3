@@ -1,0 +1,8 @@
+Verified+1: ORAN Jobbuilder <releng+oran-jobbuilder@linuxfoundation.org>
+Code-Review+1: Chris Lott <cl778h@att.com>
+Code-Review+2: Katri Turunen <katri.turunen@nokia.com>
+Submitted-by: Roni Riska <roni.riska@nokia.com>
+Submitted-at: Fri, 16 Aug 2019 09:35:32 +0000
+Reviewed-on: https://gerrit.o-ran-sc.org/r/c/ric-plt/tracelibgo/+/714
+Project: ric-plt/tracelibgo
+Branch: refs/heads/master
