@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "c75c97b1_aee2d1b0",
+        "filename": "ci/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2019-08-16T06:39:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "320e6d41_636d29ec",
+      "range": {
+        "startLine": 19,
+        "startChar": 13,
+        "endLine": 19,
+        "endChar": 34
+      },
+      "revId": "5dd25e9f6ee16e9f5a9aba4b5cffd7a0aba32955",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2cbede42_4290bac2",
         "filename": "ci/ci_build.sh",
         "patchSetId": 1
@@ -141,6 +165,30 @@
       "revId": "5dd25e9f6ee16e9f5a9aba4b5cffd7a0aba32955",
       "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e17135f0_404bd206",
+        "filename": "ci/ci_build.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000016
+      },
+      "writtenOn": "2019-08-16T06:39:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cfcfa272_7d00467f",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 3
+      },
+      "revId": "5dd25e9f6ee16e9f5a9aba4b5cffd7a0aba32955",
+      "serverId": "84e4e190-e623-4c37-9eda-58b1937c1b53",
+      "unresolved": false
     }
   ]
 }
