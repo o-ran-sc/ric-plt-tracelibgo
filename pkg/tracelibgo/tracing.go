@@ -19,16 +19,121 @@
 package tracelibgo
 
 import (
+	"fmt"
 	"io"
+	"os"
+	"strconv"
+	"strings"
 
 	"github.com/opentracing/opentracing-go"
-	"github.com/uber/jaeger-client-go"
+	jaegercfg "github.com/uber/jaeger-client-go/config"
+	jaegerlog "github.com/uber/jaeger-client-go/log"
 )
+
+const tracingEnabledEnv string = "TRACING_ENABLED"
+const jaegerSamplerTypeEnv string = "TRACING_JAEGER_SAMPLER_TYPE"
+const jaegerSamplerParamEnv = "TRACING_JAEGER_SAMPLER_PARAM"
+const jaegerAgentAddrEnv = "TRACING_JAEGER_AGENT_ADDR"
+const jaegerLogLevelEnv = "TRACING_JAEGER_LOG_LEVEL"
+
+type confMaker struct {
+	ServiceName string
+}
+
+type logLevel int
+
+const (
+	logAll  logLevel = iota
+	logErr  logLevel = iota
+	logNone logLevel = iota
+)
+
+func (cm *confMaker) GetEnv(envName string, defval string) (retval string) {
+	retval = os.Getenv(envName)
+	if retval == "" {
+		retval = defval
+	}
+	return
+}
+
+func (cm *confMaker) IsTracingEnabled() bool {
+	val := cm.GetEnv(tracingEnabledEnv, "false")
+	if val == "1" || strings.ToLower(val) == "true" {
+		return true
+	}
+	return false
+}
+
+func createDisabledTracer(name string) (opentracing.Tracer, io.Closer) {
+	if name == "" {
+		name = "dummy"
+	}
+	cfg := jaegercfg.Configuration{
+		ServiceName: name,
+		Disabled:    true,
+	}
+	tracer, closer, err := cfg.NewTracer()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "tracelibgo: trace creation error: ", err.Error())
+	}
+	return tracer, closer
+}
+
+func (cm *confMaker) getSamplerConfig() jaegercfg.SamplerConfig {
+	samplerType := cm.GetEnv(jaegerSamplerTypeEnv, "const")
+	param, err := strconv.ParseFloat(cm.GetEnv(jaegerSamplerParamEnv, "0.001"), 64)
+	if err != nil {
+		param = 0
+	}
+	return jaegercfg.SamplerConfig{Type: samplerType, Param: param}
+}
+
+func (cm *confMaker) getReporterConfig() jaegercfg.ReporterConfig {
+	agentHostPort := cm.GetEnv(jaegerAgentAddrEnv, "127.0.0.1:6831")
+	if !strings.Contains(agentHostPort, ":") {
+		agentHostPort += ":6831"
+	}
+	return jaegercfg.ReporterConfig{LogSpans: cm.getLoggingLevel() == logAll, LocalAgentHostPort: agentHostPort}
+}
+
+func (cm *confMaker) getLoggingLevel() logLevel {
+	level := strings.ToLower(cm.GetEnv(jaegerLogLevelEnv, "error"))
+	switch level {
+	case "error":
+		return logErr
+	case "all":
+		return logAll
+	default:
+		return logNone
+	}
+}
 
 // CreateTracer creates a tracer entry
 func CreateTracer(name string) (opentracing.Tracer, io.Closer) {
-	tracer, closer := jaeger.NewTracer(name,
-		jaeger.NewConstSampler(false),
-		jaeger.NewNullReporter())
+
+	cm := confMaker{name}
+	if !cm.IsTracingEnabled() {
+		return createDisabledTracer(name)
+	}
+	sampler := cm.getSamplerConfig()
+	reporter := cm.getReporterConfig()
+	cfg := jaegercfg.Configuration{
+		ServiceName: name,
+		Disabled:    false,
+		Sampler:     &sampler,
+		Reporter:    &reporter,
+	}
+	var jaegerLoggerOpt jaegercfg.Option
+	switch cm.getLoggingLevel() {
+	case logAll, logErr:
+		jaegerLoggerOpt = jaegercfg.Logger(jaegerlog.StdLogger)
+	default:
+		jaegerLoggerOpt = jaegercfg.Logger(nil)
+	}
+	tracer, closer, err := cfg.NewTracer(jaegerLoggerOpt)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "tracelibgo: cannot init tracer: "+err.Error())
+		return createDisabledTracer(name)
+	}
 	return tracer, closer
 }
