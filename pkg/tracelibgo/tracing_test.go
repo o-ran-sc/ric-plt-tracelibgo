@@ -18,15 +18,109 @@
 package tracelibgo
 
 import (
+	"os"
 	"testing"
+
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestTracerCreate(t *testing.T) {
+type ConfMakerTestSuite struct {
+	suite.Suite
+	cm confMaker
+}
+
+func (suite *ConfMakerTestSuite) SetupTest() {
+	suite.cm = confMaker{"foo"}
+}
+
+func (suite *ConfMakerTestSuite) TearDownTest() {
+	os.Unsetenv(tracingEnabledEnv)
+	os.Unsetenv(jaegerSamplerTypeEnv)
+	os.Unsetenv(jaegerSamplerParamEnv)
+	os.Unsetenv(jaegerAgentAddrEnv)
+	os.Unsetenv(jaegerLogLevelEnv)
+}
+
+func (suite *ConfMakerTestSuite) TestTracingIsDisabledByDefault() {
+	suite.False(suite.cm.IsTracingEnabled())
+}
+
+func (suite *ConfMakerTestSuite) TestTracingCanBeEnabledWithEnvVar() {
+	os.Setenv(tracingEnabledEnv, "1")
+	suite.True(suite.cm.IsTracingEnabled())
+	os.Setenv(tracingEnabledEnv, "true")
+	suite.True(suite.cm.IsTracingEnabled())
+}
+
+func (suite *ConfMakerTestSuite) TestTracingEnabledWithUnknownValueResultsDisabled() {
+	os.Setenv(tracingEnabledEnv, "0")
+	suite.False(suite.cm.IsTracingEnabled())
+	os.Setenv(tracingEnabledEnv, "foo")
+	suite.False(suite.cm.IsTracingEnabled())
+}
+
+func (suite *ConfMakerTestSuite) TestSamplerTypeDefaultIsConst() {
+	suite.Equal("const", suite.cm.getSamplerConfig().Type)
+}
+
+func (suite *ConfMakerTestSuite) TestSamplerTypeParamDefault() {
+	suite.Equal(0.001, suite.cm.getSamplerConfig().Param)
+}
+
+func (suite *ConfMakerTestSuite) TestSamplerTypeCanBeDefined() {
+	os.Setenv(jaegerSamplerTypeEnv, "probabilistic")
+	suite.Equal("probabilistic", suite.cm.getSamplerConfig().Type)
+}
+
+func (suite *ConfMakerTestSuite) TestAgentAddrCanBeDefined() {
+	os.Setenv(jaegerAgentAddrEnv, "1.1.1.1:1111")
+	suite.Equal("1.1.1.1:1111", suite.cm.getReporterConfig().LocalAgentHostPort)
+}
+
+func (suite *ConfMakerTestSuite) TestAgentAddressPortIsOptional() {
+	os.Setenv(jaegerAgentAddrEnv, "1.1.1.1")
+	suite.Equal("1.1.1.1:6831", suite.cm.getReporterConfig().LocalAgentHostPort)
+}
+
+func (suite *ConfMakerTestSuite) TestLoggingLevelDefaultIsErr() {
+	suite.Equal(logErr, suite.cm.getLoggingLevel())
+}
+
+func (suite *ConfMakerTestSuite) TestLoggingLevelCanBeConfigured() {
+	os.Setenv(jaegerLogLevelEnv, "error")
+	suite.Equal(logErr, suite.cm.getLoggingLevel())
+	os.Setenv(jaegerLogLevelEnv, "all")
+	suite.Equal(logAll, suite.cm.getLoggingLevel())
+	os.Setenv(jaegerLogLevelEnv, "none")
+	suite.Equal(logNone, suite.cm.getLoggingLevel())
+}
+
+func (suite *ConfMakerTestSuite) TestConfiguredTracerCreate() {
+	os.Setenv(tracingEnabledEnv, "1")
+	os.Setenv(jaegerSamplerParamEnv, "const")
+	os.Setenv(jaegerSamplerParamEnv, "1")
+	os.Setenv(jaegerAgentAddrEnv, "127.0.0.1:6831")
+	tracer, closer := CreateTracer("foo")
+	suite.NotNil(tracer)
+	suite.NotNil(closer)
+}
+
+func (suite *ConfMakerTestSuite) TestIfTracerCreationFailsDisabledTracerIsReturned() {
+	os.Setenv(tracingEnabledEnv, "1")
+	tracer, closer := CreateTracer("") // Empty name is an error
+	suite.NotNil(tracer)
+	suite.NotNil(closer)
+}
+
+func TestConfMakerSuite(t *testing.T) {
+	suite.Run(t, new(ConfMakerTestSuite))
+}
+
+func TestDefaultTracerCreate(t *testing.T) {
 	tracer, closer := CreateTracer("foo")
 	assert.NotNil(t, tracer)
 	assert.NotNil(t, closer)
 	err := closer.Close()
 	assert.Nil(t, err)
 }
-
