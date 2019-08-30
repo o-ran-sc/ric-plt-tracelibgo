@@ -2,7 +2,6 @@
 
 The library creates a configured tracer instance.
 
-ToDO: configuration...
 
 ## Usage
 
@@ -48,6 +47,23 @@ The serialized span context is got, for example, from the RMR library.
 	}
 	span := opentracing.GlobalTracer().StartSpan("go test span", opentracing.ChildOf(context))
 ```
+
+## Configuration
+
+The trace library currently supports only [Jaeger](https://www.jaegertracing.io/) [golang client](https://github.com/jaegertracing/jaeger-client-go) tracer implementation.
+The configuration is done using environment variables:
+
+| environment variable         | values                              | default        |
+| ---------------------------- |------------------------------------ | -------------- |
+| TRACING_ENABLED              | 1, true, 0, false                   | false          |
+| TRACING_JAEGER_SAMPLER_TYPE  | const, propabilistic, ratelimiting  | const          |
+| TRACING_JAEGER_SAMPLER_PARAM | float                               | 0.001          |
+| TRACING_JAEGER_AGENT_ADDR    | IP addr[:port]                      | 127.0.0.1:6831 |
+| TRACING_JAEGER_LOG_LEVEL     | all, error, none                    | none           |
+
+Meaning of the configuration variables is describe in Jaeger web pages.
+By default a no-op tracer is created.
+
 
 ## Unit testing
 
