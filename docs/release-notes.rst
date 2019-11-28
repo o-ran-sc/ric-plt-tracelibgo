@@ -24,7 +24,9 @@
 ..
 .. limitations under the License.
 ..
-
+..   This source code is part of the near-RT RIC (RAN Intelligent Controller)
+..  platform project (RICP).
+..
 
 Release-Notes
 =============
@@ -78,7 +80,7 @@ Deliverables
 Software Deliverables
 +++++++++++++++++++++
 
-Golang package: 
+Golang package:
 gerrit.o-ran-sc.org/ric-plt/tracelibgo/pkg/tracelibgo
 
 
